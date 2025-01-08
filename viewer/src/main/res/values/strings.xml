@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Build Smali Test</string>
+    <string name="test1">Build Smali Test</string>
+    <string name="test2">Build Smali Test</string>
+    <string name="test3">Build Smali Test</string>
+    <string name="provider_pkg_name">org.buildsmali.provider</string>
+</resources>

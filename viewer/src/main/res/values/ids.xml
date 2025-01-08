@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="test1" type="id"></item>
+    <item name="test2" type="id"></item>
+    <item name="test3" type="id"></item>
+    <item name="test4" type="id"></item>
+    <item name="test5" type="id"></item>
+    <item name="test6" type="id"></item>
+    <item name="test7" type="id"></item>
+</resources>
