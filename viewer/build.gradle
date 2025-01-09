@@ -1,12 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
     namespace 'org.buildsmali.viewer'
     compileSdk 35
 
+    buildFeatures {
+        compose true
+    }
 
     defaultConfig {
         minSdk 30
@@ -45,6 +49,10 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    implementation 'org.apache.commons:commons-collections4:4.4'
-    implementation 'org.smali:dexlib2:2.5.2'
+    implementation libs.material3
+    implementation libs.ui.tooling.preview
+    debugImplementation libs.ui.tooling
+
+    implementation libs.commons.collections4
+    implementation libs.dexlib2
 }
