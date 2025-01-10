@@ -91,7 +91,11 @@ class ViewActivity : AppCompatActivity() {
                 container,
                 name
             )
-        }.sorted().forEach { def -> addClassDefToList(def) }
+        }.sorted().fold(smaliData) { acc, def ->
+            addClassDefToList(def)
+            acc
+        }
+            //.forEach { def -> addClassDefToList(def) }
 
         //显示
         val linear = findViewById<LinearLayout>(R.id.linear_list)
@@ -134,7 +138,7 @@ class ViewActivity : AppCompatActivity() {
         //新建包的时候，底下附带一个容器，用于包内的子包和子类的显隐
         val clsIcon = AppCompatResources.getDrawable(this, R.drawable.ic_class)
         val pkgIcon = AppCompatResources.getDrawable(this, R.drawable.ic_folder)
-        val currAllClasses = pkgData.allClasses
+        val currAllClasses = pkgData.allSubClasses
         val currPkgCheck = findCheckBoxOfPkg(root.parent as ViewGroup)
         //子包
         pkgData.subPackages.forEach { (name: String, pkg: SmaliPackageData) ->
@@ -143,7 +147,7 @@ class ViewActivity : AppCompatActivity() {
             val image = container.findViewById<ImageView>(R.id.icon)
             val check = container.findViewById<MaterialCheckBox>(R.id.check)
             val subFrame = container.findViewById<LinearLayout>(R.id.sub_frame)
-            val subAllClasses = pkg.allClasses
+            val subAllClasses = pkg.allSubClasses
 
             tv.text = name
             image.setImageDrawable(pkgIcon)

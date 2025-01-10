@@ -13,6 +13,8 @@ kotlin = "2.1.0"
 coreKtx = "1.15.0"
 composeM3 = "1.3.1"
 composeUITooling = "1.7.6"
+lifecycleRuntimeKtx = "2.8.7"
+composeBom = "2024.12.01"
 
 [libraries]
 commons-collections4 = { module = "org.apache.commons:commons-collections4", version.ref = "commonsCollections4" }
@@ -20,14 +22,21 @@ dexlib2 = { module = "org.smali:dexlib2", version.ref = "dexlib2" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-material3 = { module = "androidx.compose.material3:material3", version.ref = "composeM3"}
-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeUITooling"}
-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeUITooling"}
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+material3 = { module = "androidx.compose.material3:material3", version.ref = "composeM3" }
+ui = { group = "androidx.compose.ui", name = "ui" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeUITooling" }
+ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeUITooling" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -30,28 +30,20 @@ class SmaliPackageData(
     val classes: LinkedHashMap<String, DexBackedClassDef> = LinkedHashMap()
 
     /**
-     * 此包下的所有子类（含深层）
+     * 此包下的所有子类（包括子包中的）
+     * 因为会在首次调用时生成缓存结果，所以请勿在全部包结构构建完成之前调用此函数
      */
-    private var allSubClasses: MutableList<DexBackedClassDef>? = null
-
-    val allClasses: List<DexBackedClassDef>
-        /**
-         * 返回此包中所有子类（包括子包中的）
-         * 因为会缓存结果，所以请勿在全部包结构构建完成之前调用此函数
-         */
-        get() {
-            if (allSubClasses == null) {
-                allSubClasses = ArrayList(classes.values)
-                val stack = Stack<SmaliPackageData>()
-                stack.addAll(subPackages.values)
-                while (!stack.empty()) {
-                    val pkg = stack.pop()
-                    allSubClasses!!.addAll(pkg.classes.values)
-                    stack.addAll(pkg.subPackages.values)
-                }
-            }
-            return allSubClasses as MutableList<DexBackedClassDef>
+    val allSubClasses: MutableList<DexBackedClassDef> by lazy {
+        val allClasses = ArrayList(classes.values)
+        val stack = Stack<SmaliPackageData>()
+        stack.addAll(subPackages.values)
+        while (!stack.empty()) {
+            val pkg = stack.pop()
+            allClasses.addAll(pkg.classes.values)
+            stack.addAll(pkg.subPackages.values)
         }
+        allClasses
+    }
 
     /**
      * 给定子包名（e.g. example) ，返回对应的实例。要求子包名必须是此包的直接子包
