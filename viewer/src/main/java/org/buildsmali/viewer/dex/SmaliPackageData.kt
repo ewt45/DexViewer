@@ -51,7 +51,7 @@ class SmaliPackageData(
     fun getSubPackage(subPkgName: String): SmaliPackageData {
         return subPackages.getOrPut(subPkgName) {
             SmaliPackageData(
-                "$fullPkgName${'$'}subPkgName/",
+                "$fullPkgName$subPkgName/",
                 subPkgName
             )
         }
@@ -70,6 +70,12 @@ class SmaliPackageData(
      */
     fun getClassDef(clsName: String): DexBackedClassDef? {
         return classes[clsName]
+    }
+
+    companion object {
+        fun newRoot(): SmaliPackageData {
+            return SmaliPackageData("L", "");
+        }
     }
 
 
