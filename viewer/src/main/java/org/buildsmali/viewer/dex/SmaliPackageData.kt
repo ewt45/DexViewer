@@ -23,6 +23,11 @@ class SmaliPackageData(
      * 此包中所有直接子包
      */
     val subPackages: LinkedHashMap<String, SmaliPackageData> = LinkedHashMap()
+//    val subPackages: LinkedHashMap<String, SmaliPackageData> by lazy {
+//        val a = LinkedHashMap<String, SmaliPackageData>()
+//        if (fullPkgName == "L") a["aaa"] = SmaliPackageData(fullPkgName + "aaa/", "aaa")
+//        a
+//    }
 
     /**
      * 此包中所有直接子类

@@ -2,10 +2,12 @@
 agp = "8.7.3"
 commonsCollections4 = "4.4"
 dexlib2 = "2.5.2"
+jadxCore = "1.5.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+kotlinxSerializationJson = "1.7.3"
 material = "1.12.0"
 activity = "1.9.3"
 constraintlayout = "2.2.0"
@@ -15,13 +17,17 @@ composeM3 = "1.3.1"
 composeUITooling = "1.7.6"
 lifecycleRuntimeKtx = "2.8.7"
 composeBom = "2024.12.01"
+navigationCompose = "2.8.5"
 
 [libraries]
 commons-collections4 = { module = "org.apache.commons:commons-collections4", version.ref = "commonsCollections4" }
 dexlib2 = { module = "org.smali:dexlib2", version.ref = "dexlib2" }
+jadx-core = { module = "io.github.skylot:jadx-core", version.ref = "jadxCore" }
+jadx-dex-input = { module = "io.github.skylot:jadx-dex-input", version.ref = "jadxCore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -32,17 +38,19 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-material3 = { module = "androidx.compose.material3:material3", version.ref = "composeM3" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "composeM3" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "composeUITooling" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "composeUITooling" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = {id = 'org.jetbrains.kotlin.plugin.serialization', version.ref = "kotlin"}
 

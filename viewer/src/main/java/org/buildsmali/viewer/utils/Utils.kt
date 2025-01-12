@@ -23,26 +23,7 @@ object Utils {
         }
     }
 
-    /**
-     * 读取dex,将smali类存入smaliData中
-     */
-    fun fillSmaliDataFromDex(apkPath: String, smaliData: SmaliPackageData): SmaliPackageData {
-        val container = DexFileFactory.loadDexContainer(File(apkPath), null)
-        return container.dexEntryNames
-            .flatMap { name: String -> container.getEntry(name)!!.dexFile!!.classes }
-            .sorted()
-            .fold(smaliData) { rootPkg, def ->
-                //将每个类放到对应包下
-                val type = def.type
-                var currPkg = rootPkg
-                val splits = type.substring(1, type.length - 1).split("/".toRegex())
-                splits.forEachIndexed { idx, split ->
-                    when (idx) {
-                        splits.size - 1 -> currPkg.addClassDef(split, def) // 将类添加到对应包下
-                        else -> currPkg = currPkg.getSubPackage(split) // 寻找包名
-                    }
-                }
-                rootPkg
-            }
-    }
+
+
+
 }

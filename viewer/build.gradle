@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -42,6 +43,7 @@ dependencies {
 
     implementation libs.appcompat
     implementation libs.material
+    implementation libs.compose.material3
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.core.ktx
@@ -52,21 +54,25 @@ dependencies {
     implementation platform(libs.compose.bom)
     implementation libs.ui
     implementation libs.ui.graphics
+    implementation libs.ui.tooling.preview
+    implementation libs.navigation.compose
+    implementation libs.kotlinx.serialization.json
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
-    implementation libs.material3
-    implementation libs.ui.tooling.preview
     androidTestImplementation platform(libs.compose.bom)
     androidTestImplementation libs.ui.test.junit4
     debugImplementation libs.ui.tooling
-
+    debugImplementation libs.ui.test.manifest
 
 
     implementation libs.commons.collections4
     implementation libs.dexlib2
-    debugImplementation libs.ui.test.manifest
+    implementation(libs.jadx.core)
+    implementation(libs.jadx.dex.input)
+    // (jadx) add slf4j implementation.
+    //implementation("com.github.tony19:logback-android:3.0.0")
 
 
 }

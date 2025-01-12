@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -41,12 +42,21 @@ import org.buildsmali.viewer.R
 import org.buildsmali.viewer.dex.SmaliPackageData
 
 @Composable
-fun HomeScreen(viewModel: MyViewModel = viewModel(), modifier: Modifier = Modifier) {
+fun HomeScreen(
+    viewModel: MyViewModel = viewModel(),
+    modifier: Modifier = Modifier,
+    onNavigationToTextViewer: () -> Unit
+) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         Greeting(viewModel.infoText.value)
+        Button(
+            onClick = {
+                viewModel.extractAndDecompileClasses()
+                onNavigationToTextViewer()
+            }
+        ) { Text("测试跳转") }
 
         PackageContent(viewModel.smaliData.value)
     }
@@ -77,6 +87,8 @@ fun PackageContent(pkg: SmaliPackageData) {
             //包和类的勾选状态，依据map中对应类的boolean 来决定是否勾选。用户操作时，也通过修改map的value来触发重组
             val checked by derivedStateOf {
                 when {
+                    subPkg.allSubClasses.size == 0 -> ToggleableState.Off
+
                     subPkg.allSubClasses.all { def ->
                         viewModel.checkedClassesMap.getOrDefault(def, false)
                     } -> ToggleableState.On
