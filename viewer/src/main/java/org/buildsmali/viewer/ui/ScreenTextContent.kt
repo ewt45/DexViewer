@@ -18,4 +18,8 @@ fun TextContentScreen(viewModel: MyViewModel = viewModel(),
         1 -> Text("提取成功！")
     }
 
+    if (viewModel.javaClasses.isNotEmpty()) {
+        val first = viewModel.javaClasses[0]
+        Text("${first.`package`}\n${first.name}\n${first.code}")
+    }
 }

@@ -1,13 +1,16 @@
 package org.buildsmali.viewer
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import jadx.api.JadxArgs
 import jadx.api.JadxDecompiler
+import jadx.api.JavaClass
 import jadx.api.impl.NoOpCodeCache
 import jadx.api.impl.SimpleCodeWriter
 import jadx.api.security.JadxSecurityFlag
@@ -54,7 +57,16 @@ class MyViewModel : ViewModel() {
     val extractedResult get() = _extractedResult
     private val _extractedResult = mutableIntStateOf(0)
 
-    lateinit var container: MultiDexContainer<out DexBackedDexFile>
+    /**
+     * apk输入
+     */
+    private lateinit var container: MultiDexContainer<out DexBackedDexFile>
+
+    /**
+     * jadx解析后的类信息
+     */
+    val javaClasses  get() = _javaClasses
+    private val _javaClasses = mutableStateListOf<JavaClass>()
 
     /**
      * 读取dex,将smali类存入smaliData中
@@ -118,24 +130,11 @@ class MyViewModel : ViewModel() {
                     JadxDecompiler(jadxArgs).use { jadx ->
                         jadx.load()
 
+                        // decompile and save all files into 'outDir'
+//                        jadx.save()
 
-                        when (mode) {
-                            DecompileMode.MAIN_ACTIVITY -> {
-                                // search and return code of MainActivity
-                                for (cls in jadx.classes) {
-                                    Log.d("SmallApp", "Class: ${cls.name}")
-                                    if (cls.name == "MainActivity") {
-                                        return cls.code
-                                    }
-                                }
-                            }
-
-                            DecompileMode.SAVE_ALL -> {
-                                // decompile and save all files into 'outDir'
-                                jadx.save()
-                                return "Saved files in $outDir:\n${listFilesInDir(outDir)}"
-                            }
-                        }
+                        javaClasses.addAll(jadx.classes)
+                        Log.d("aaa", "extractAndDecompileClasses: 解析出java类："+jadx.classes.map { it.name } )
                     }
                 }
             }
