@@ -4,6 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="viewer">
         <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-01-19T06:04:44.671452581Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="Default" identifier="serial=192.168.0.101:5555;connection=23ee4559" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="provider">
         <option name="selectionMode" value="DROPDOWN" />

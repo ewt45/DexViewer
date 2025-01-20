@@ -8,12 +8,19 @@ object Consts {
     lateinit var cacheOutDexFile: File
     lateinit var cacheJadxOutDir: File
 
+    val strJava = "Java"
+    val strSmali = "Smali"
+
     /**
      * 初始化一些常量数据
      */
     fun initData(ctx: Context) {
-        cacheDir = ctx.cacheDir
+//        cacheDir = ctx.cacheDir
+        //TODO 改为内部路径？
+        cacheDir = File("/sdcard/Download/Jadx")
+        cacheDir.mkdirs()
         cacheOutDexFile = File(cacheDir, "cacheOut.dex")
         cacheJadxOutDir = File(cacheDir, "cacheJadxOut")
+        cacheJadxOutDir.mkdirs()
     }
 }

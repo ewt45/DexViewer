@@ -2,6 +2,9 @@ package org.buildsmali.viewer.utils
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
+import jadx.api.JavaClass
+import jadx.api.impl.InMemoryCodeCache
 import org.buildsmali.viewer.dex.SmaliPackageData
 import org.jf.dexlib2.DexFileFactory
 import org.jf.dexlib2.dexbacked.DexBackedClassDef
@@ -23,7 +26,21 @@ object Utils {
         }
     }
 
-
+    //
+    //
+    //
+    /**
+     * 为啥codecache是null呢？？？导致抛出异常了
+     * 在viewModel里新建args时,生成decompiler时, .load()时的args都是同一个。但是compose时args就变了，codecache为null
+     * 而且只用设置一次，之后再次新建args和decompiler,这里的codecache也不为null
+     */
+    fun fixCodeCacheIsNull(javaClass:JavaClass) {
+        val jadxArgs = javaClass.classNode.root().args
+        if (jadxArgs.codeCache == null) {
+            jadxArgs.codeCache = InMemoryCodeCache()
+            Log.w("aaa", "TextContentScreen: codeCache为null,设为InMemoryCodeCache")
+        }
+    }
 
 
 }

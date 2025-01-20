@@ -72,7 +72,7 @@ dependencies {
     implementation(libs.jadx.core)
     implementation(libs.jadx.dex.input)
     // (jadx) add slf4j implementation.
-    //implementation("com.github.tony19:logback-android:3.0.0")
+    implementation(libs.logback.android)
 
 
 }

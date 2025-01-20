@@ -47,8 +47,9 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigationToTextViewer: () -> Unit
 ) {
+    val scrollState = rememberScrollState() //滚动
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.verticalScroll(scrollState)
     ) {
         Greeting(viewModel.infoText.value)
         Button(
@@ -58,7 +59,7 @@ fun HomeScreen(
             }
         ) { Text("测试跳转") }
 
-        PackageContent(viewModel.smaliData.value)
+        PackageContent(viewModel, viewModel.smaliData.value)
     }
 }
 
@@ -71,15 +72,14 @@ fun Greeting(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PackageContent(pkg: SmaliPackageData) {
+fun PackageContent(viewModel: MyViewModel, pkg: SmaliPackageData) {
     val isRoot = pkg.fullPkgName == "L"
-    val scrollState = if (isRoot) rememberScrollState() else null
-    val viewModel: MyViewModel = viewModel()
+//    val scrollState = if (isRoot) rememberScrollState() else null
     Column(
         modifier = Modifier
             .padding(start = if (isRoot) 8.dp else 16.dp)
             //最外层列允许滚动
-            .then(if (isRoot) Modifier.verticalScroll(scrollState!!) else Modifier)
+//            .then(if (isRoot) Modifier.verticalScroll(scrollState!!) else Modifier)
     ) {
         //子包
         pkg.subPackages.values.forEach { subPkg ->
@@ -116,7 +116,7 @@ fun PackageContent(pkg: SmaliPackageData) {
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-                PackageContent(subPkg)
+                PackageContent(viewModel, subPkg)
             }
         }
 //        val classesChecked = remember {

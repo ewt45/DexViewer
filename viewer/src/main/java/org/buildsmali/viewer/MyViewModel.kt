@@ -12,9 +12,6 @@ import jadx.api.JadxArgs
 import jadx.api.JadxDecompiler
 import jadx.api.JavaClass
 import jadx.api.impl.NoOpCodeCache
-import jadx.api.impl.SimpleCodeWriter
-import jadx.api.security.JadxSecurityFlag
-import jadx.api.security.impl.JadxSecurity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -27,7 +24,9 @@ import org.jf.dexlib2.iface.MultiDexContainer
 import org.jf.dexlib2.writer.io.FileDataStore
 import org.jf.dexlib2.writer.pool.DexPool
 import java.io.File
-import java.util.function.Function
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
 
 
 class MyViewModel : ViewModel() {
@@ -69,6 +68,12 @@ class MyViewModel : ViewModel() {
     private val _javaClasses = mutableStateListOf<JavaClass>()
 
     /**
+     * 显示的代码是JAVA还是SMALI. 应为Consts.strJava或Consts.strSmali
+     */
+    val displayCodeType get() = _displayCodeType
+    private val _displayCodeType = mutableStateOf(Consts.strJava)
+
+    /**
      * 读取dex,将smali类存入smaliData中
      */
     fun fillSmaliDataFromDex(apkPath: String, smaliData: SmaliPackageData): SmaliPackageData {
@@ -94,8 +99,11 @@ class MyViewModel : ViewModel() {
     /**
      * 点击提取按钮后，在后台线程将用户勾选的类合并为dex,存入本地，并使用jadx反编译smali和java
      */
+    @OptIn(ExperimentalPathApi::class)
     fun extractAndDecompileClasses() {
         extractedResult.intValue = 0
+        javaClasses.clear()
+
         viewModelScope.launch {
             //后台线程提取和反编译
             val result = withContext(Dispatchers.IO) {
@@ -113,15 +121,19 @@ class MyViewModel : ViewModel() {
                     jadxArgs.inputFiles = listOf(dexFile)
                     jadxArgs.outDir = outDir
 
+                    //清除缓存？
+                    jadxArgs.filesGetter.cacheDir.deleteRecursively()
+                    jadxArgs.filesGetter.cacheDir.createDirectories()
+
+
                     jadxArgs.threadsCount = 1 // reduce memory usage
                     jadxArgs.codeCache = NoOpCodeCache.INSTANCE // code cache not needed
-                    jadxArgs.codeWriterProvider = Function(::SimpleCodeWriter)
-                    // code attributes not needed
+//                    jadxArgs.codeWriterProvider = Function(::SimpleCodeWriter)  // code attributes not needed
 
                     // disable secure xml parser (some features not supported on Android)
-                    val securityFlags = JadxSecurityFlag.all()
-                    securityFlags.remove(JadxSecurityFlag.SECURE_XML_PARSER)
-                    jadxArgs.security = JadxSecurity(securityFlags)
+//                    val securityFlags = JadxSecurityFlag.all()
+//                    securityFlags.remove(JadxSecurityFlag.SECURE_XML_PARSER)
+//                    jadxArgs.security = JadxSecurity(securityFlags)
 
                     // (Optional) Class set tree loading can take too much time,
                     // but disabling it can reduce result code quality
@@ -131,16 +143,22 @@ class MyViewModel : ViewModel() {
                         jadx.load()
 
                         // decompile and save all files into 'outDir'
-//                        jadx.save()
+                        jadx.save()
+
+                        //为什么保存本地文件正常，直接从java获取为null？
+//                        if (jadx.classes.isNotEmpty())
 
                         javaClasses.addAll(jadx.classes)
                         Log.d("aaa", "extractAndDecompileClasses: 解析出java类："+jadx.classes.map { it.name } )
+
                     }
                 }
             }
 
             //设置运行结果 触发重组
             extractedResult.intValue = if (result.isSuccess) 1 else 2
+            if (result.isFailure)
+                Log.d("aaa", "extractAndDecompileClasses: "+result.exceptionOrNull())
         }
     }
 }
