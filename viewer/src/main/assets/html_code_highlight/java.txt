@@ -1,0 +1,22 @@
+package test;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+
+/* loaded from: /home/cloud/codes/jadx反编译/exagear windows 3.0.1/反编译错误/5 try catch/try resource处理 7.dex */
+public class Test5 {
+    boolean flag;
+
+    public void test2_加finally() {
+        try {
+            try {
+                System.out.println("try");
+            } catch (RuntimeException e) {
+                System.out.println("catch");
+            }
+        } finally {
+            System.out.println("finally");
+        }
+    }
+}

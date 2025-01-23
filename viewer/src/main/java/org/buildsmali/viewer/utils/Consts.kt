@@ -8,9 +8,6 @@ object Consts {
     lateinit var cacheOutDexFile: File
     lateinit var cacheJadxOutDir: File
 
-    val strJava = "Java"
-    val strSmali = "Smali"
-
     /**
      * 初始化一些常量数据
      */
@@ -23,4 +20,9 @@ object Consts {
         cacheJadxOutDir = File(cacheDir, "cacheJadxOut")
         cacheJadxOutDir.mkdirs()
     }
+}
+
+enum class CodeType(val value:String) {
+    Java("Java"),
+    Smali("Smali"),
 }

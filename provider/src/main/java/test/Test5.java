@@ -4,6 +4,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Test5 {
+    public void test() {
+
+    }
 
     public void test1_普通trycatch() {
         try {

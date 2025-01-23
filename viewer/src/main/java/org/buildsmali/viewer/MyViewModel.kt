@@ -16,10 +16,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.buildsmali.viewer.dex.SmaliPackageData
+import org.buildsmali.viewer.utils.CodeType
 import org.buildsmali.viewer.utils.Consts
 import org.jf.dexlib2.DexFileFactory
 import org.jf.dexlib2.dexbacked.DexBackedClassDef
 import org.jf.dexlib2.dexbacked.DexBackedDexFile
+import org.jf.dexlib2.dexbacked.instruction.DexBackedInstruction35c
 import org.jf.dexlib2.iface.MultiDexContainer
 import org.jf.dexlib2.writer.io.FileDataStore
 import org.jf.dexlib2.writer.pool.DexPool
@@ -68,10 +70,10 @@ class MyViewModel : ViewModel() {
     private val _javaClasses = mutableStateListOf<JavaClass>()
 
     /**
-     * 显示的代码是JAVA还是SMALI. 应为Consts.strJava或Consts.strSmali
+     * 显示的代码是JAVA还是SMALI.
      */
     val displayCodeType get() = _displayCodeType
-    private val _displayCodeType = mutableStateOf(Consts.strJava)
+    private val _displayCodeType = mutableStateOf(CodeType.Java)
 
     /**
      * 读取dex,将smali类存入smaliData中

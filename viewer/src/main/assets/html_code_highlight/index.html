@@ -1,0 +1,113 @@
+<html>
+
+<head>
+    <link id="link-theme" rel="stylesheet" href="default.css">
+    <style>body{margin:0px;}</style>
+    <script src="highlight.js"></script>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <pre id="el_pre"><code id="el_code" class=""></code></pre>
+    <script>
+        // hljs.highlightAll();
+        const elPre = document.getElementById("el_pre")
+        const elCode = document.getElementById("el_code")
+        const linkTheme = document.getElementById("link-theme")
+
+        function doHighlight(json) {
+            linkTheme.href = !json.isDark ? "default.css" : "dark.css" //设置浅色/深色主题
+            //elCode.class = "language-" + json.lang //设置高亮是哪种语言(加上反而不对了。算了去掉吧）
+
+            //方法1：直接用highlight生成的html,缺少背景色
+            // elCode.innerHTML = hljs.highlight(json.code, { language: json.lang }).value
+            //方法2：highlightAll()是不缺背景色的
+            elCode.innerHTML = json.code
+            delete elCode.dataset.highlighted //有highlighted标识的不会被重新高亮。所以先去掉
+            elCode.className = '' //去掉上次的代码语言，否则优先按class这里指定的来了
+            hljs.highlightAll()
+        }
+
+        const testJavaText = `package test;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+
+/* loaded from: /home/cloud/codes/jadx反编译/exagear windows 3.0.1/反编译错误/5 try catch/try resource处理 7.dex */
+public class Test5 {
+    boolean flag;
+
+    public void test2_加finally() {
+        try {
+            try {
+                System.out.println("try");
+            } catch (RuntimeException e) {
+                System.out.println("catch");
+            }
+        } finally {
+            System.out.println("finally");
+        }
+    }
+}`
+        const testSmaliText = `###### Class test.Test5 (test.Test5)
+.class public Ltest/Test5;
+.super Ljava/lang/Object;
+.source "Test5.java"
+
+
+# instance fields
+.field flag:Z
+
+
+# direct methods
+.method public constructor <init>()V
+    .registers 1
+
+    .line 6
+    invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+
+    return-void
+.end method
+
+
+# virtual methods
+.method public test1_普通trycatch()V
+    .registers 4
+
+    .line 10
+    :try_start_0
+    sget-object v0, Ljava/lang/System;->out:Ljava/io/PrintStream;
+
+    const-string v1, "try"
+
+    invoke-virtual {v0, v1}, Ljava/io/PrintStream;->println(Ljava/lang/String;)V
+    :try_end_7
+    .catch Ljava/lang/RuntimeException; {:try_start_0 .. :try_end_7} :catch_8
+
+    .line 13
+    goto :goto_10
+
+    .line 11
+    :catch_8
+    move-exception v0
+
+    .line 12
+    .local v0, "e":Ljava/lang/RuntimeException;
+    sget-object v1, Ljava/lang/System;->out:Ljava/io/PrintStream;
+
+    const-string v2, "catch"
+
+    invoke-virtual {v1, v2}, Ljava/io/PrintStream;->println(Ljava/lang/String;)V
+
+    .line 14
+    .end local v0    # "e":Ljava/lang/RuntimeException;
+    :goto_10
+    return-void
+.end method
+`
+        //doHighlight({"lang":"smali", "code":testSmaliText, "isDark":true})
+    </script>
+</body>
+
+</html>

@@ -42,5 +42,11 @@ object Utils {
         }
     }
 
+}
 
+/**
+ * 是否在一个区间内（区间不包括最大值和最小值）
+ */
+fun Float.inOpenRange(min:Float, max:Float):Boolean {
+    return this < max && this > min
 }
