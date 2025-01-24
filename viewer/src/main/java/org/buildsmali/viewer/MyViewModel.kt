@@ -43,7 +43,7 @@ class MyViewModel : ViewModel() {
      * 测试文本
      */
     val infoText: MutableState<String> get() = _infoText
-    private val _infoText = mutableStateOf("1111")
+    private val _infoText = mutableStateOf("stub")
 
     /**
      * 用户勾选了的类。用来提取和解析
@@ -162,5 +162,15 @@ class MyViewModel : ViewModel() {
             if (result.isFailure)
                 Log.d("aaa", "extractAndDecompileClasses: "+result.exceptionOrNull())
         }
+    }
+
+    /**
+     * 读取dex前，清空上一次的数据存储
+     */
+    fun reset() {
+        _infoText.value = "stub"
+        _checkedClassesMap.clear()
+        _extractedResult.intValue = 0
+        _javaClasses.clear()
     }
 }

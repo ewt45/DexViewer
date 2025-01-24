@@ -1,11 +1,14 @@
 package test;
 
+import android.util.Log;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Test5 {
     public void test() {
-
+        int i = 1;
+        Log.d("aaa", 3*i + "");
+        
     }
 
     public void test1_普通trycatch() {

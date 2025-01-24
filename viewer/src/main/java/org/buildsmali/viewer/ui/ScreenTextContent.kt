@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
@@ -70,6 +71,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -112,6 +114,13 @@ fun TextContentScreen(
             2 -> Text("提取失败！")
         }
 
+        //如果没有要显示的类，直接返回
+        LaunchedEffect(viewModel.checkedClassesMap.size) {
+            if (viewModel.checkedClassesMap.isEmpty()) {
+                onNavigationToDexViewer()
+            }
+        }
+
         if (result == 1 && viewModel.javaClasses.isNotEmpty()) {
             val displayCls = remember { mutableStateOf(viewModel.javaClasses[0]) }
             Utils.fixCodeCacheIsNull(displayCls.value)
@@ -130,14 +139,6 @@ fun TextContentScreen(
                     CodeType.Smali -> displayCls.value.smali
                 }
             )
-//            Card(
-//                colors = CardDefaults.cardColors(
-//                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-//                ),
-//                modifier = Modifier
-//            ) {
-//
-//            }
         }
     }
 }
@@ -175,8 +176,6 @@ fun Toolbar(
 
 @Composable
 fun JavaClassNameText(name: String, pkg: String) {
-//    LocalContentColor.current
-//    MaterialTheme.colorScheme.onSurface
     Column {
         Spacer(modifier = Modifier.height(4.dp))
         Text(name, maxLines = 1, style = TextStyle(fontSize = 20.sp))
@@ -199,7 +198,6 @@ fun JavaSmaliSwitch(
 ) {
 
     val currOption = options.filter { it.first == currCodeType }[0]
-//    var selectIdx by remember { mutableIntStateOf(0) }
     OutlinedButton(
         modifier = modifier,
         onClick = {
@@ -284,6 +282,8 @@ fun CodeTextAndroidView(lang: CodeType, code: String) {
         factory = { ctx ->
             WebView(ctx).apply {
                 settings.javaScriptEnabled = true // 启用 JavaScript
+                settings.useWideViewPort = true
+                settings.setSupportZoom(true)
                 setBackgroundColor(android.graphics.Color.TRANSPARENT) //防止多余背景显示白色
 
                 //loadUrl异步加载，没法直接执行js函数。得等他加载完了再执行

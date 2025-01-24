@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Build Smali Test"
+rootProject.name = "DexViewer"
 include ':viewer'
-include ':provider'
