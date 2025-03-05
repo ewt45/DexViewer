@@ -1,6 +1,8 @@
 [versions]
 agp = "8.8.0"
 commonsCollections4 = "4.4"
+commonsIo = "2.18.0"
+datastorePreferences = "1.1.2"
 dexlib2 = "2.5.2"
 jadxCore = "1.5.1"
 junit = "4.13.2"
@@ -22,6 +24,7 @@ navigationCompose = "2.8.5"
 
 [libraries]
 commons-collections4 = { module = "org.apache.commons:commons-collections4", version.ref = "commonsCollections4" }
+commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
 dexlib2 = { module = "org.smali:dexlib2", version.ref = "dexlib2" }
 jadx-core = { module = "io.github.skylot:jadx-core", version.ref = "jadxCore" }
 jadx-dex-input = { module = "io.github.skylot:jadx-dex-input", version.ref = "jadxCore" }
@@ -36,6 +39,7 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }

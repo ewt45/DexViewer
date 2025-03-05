@@ -36,6 +36,7 @@ fun MyApp(viewModel: MyViewModel = viewModel()) {
                 HomeScreen(
                     viewModel = viewModel,
                     onNavigationToTextViewer = {
+                        viewModel.extractAndDecompileClasses()
                         navController.navigate(TextViewer)
                     }
                 )

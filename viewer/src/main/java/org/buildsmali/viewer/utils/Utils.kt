@@ -1,10 +1,19 @@
 package org.buildsmali.viewer.utils
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import jadx.api.JavaClass
 import jadx.api.impl.InMemoryCodeCache
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.apache.commons.io.IOUtils
+import org.buildsmali.viewer.ComposeViewerActivity
 import org.buildsmali.viewer.dex.SmaliPackageData
 import org.jf.dexlib2.DexFileFactory
 import org.jf.dexlib2.dexbacked.DexBackedClassDef
@@ -42,11 +51,23 @@ object Utils {
         }
     }
 
+    /**
+     * 将提取出的缓存dex复制到指定文件
+     */
+    suspend fun copyCachedOutDexToTarget(ctx: Context, uri: Uri) = withContext(Dispatchers.IO){
+        ctx.contentResolver.openOutputStream(uri).use { output ->
+            IOUtils.copy(Consts.cacheOutDexFile.inputStream(), output)
+        }
+    }
+
 }
 
 /**
- * 是否在一个区间内（区间不包括最大值和最小值）
+ * 将context转为ComposeViewerActivity
  */
-fun Float.inOpenRange(min:Float, max:Float):Boolean {
-    return this < max && this > min
+fun Context.findActivity():ComposeViewerActivity = when(this) {
+    is ComposeViewerActivity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> throw RuntimeException("无法从此context找到ComposeViewerActivity")
 }
+

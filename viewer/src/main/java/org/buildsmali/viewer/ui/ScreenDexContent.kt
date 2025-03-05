@@ -8,10 +8,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,67 +20,126 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.buildsmali.viewer.MyViewModel
 import org.buildsmali.viewer.R
 import org.buildsmali.viewer.dex.SmaliPackageData
+import org.buildsmali.viewer.utils.findActivity
+import org.jf.dexlib2.dexbacked.DexBackedClassDef
 
+/**
+ * @param onNavigationToTextViewer 提取dex, jadx反编译，然后跳转到代码显示界面
+ */
 @Composable
 fun HomeScreen(
     viewModel: MyViewModel = viewModel(),
     modifier: Modifier = Modifier,
     onNavigationToTextViewer: () -> Unit
 ) {
-    val scrollState = rememberScrollState() //滚动
-    Column(
-        modifier = modifier.verticalScroll(scrollState)
-    ) {
-        Greeting(viewModel.infoText.value)
-        Button(
-            onClick = {
-                viewModel.extractAndDecompileClasses()
-                onNavigationToTextViewer()
-            }
-        ) { Text("测试跳转") }
+    val context = LocalContext.current.findActivity()
+    val vScrollState = rememberScrollState() //滚动
+    val hScrollState = rememberScrollState()
 
-        PackageContent(viewModel, viewModel.smaliData.value)
+    ExportResultDialog(viewModel.exportResult, onNavigationToTextViewer)
+    Column(modifier = modifier) {
+        //infoText, 刷新按钮
+        //TODO 下拉即可刷新 https://developer.android.google.cn/develop/ui/compose/components/pull-to-refresh?hl=zh-cn
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                viewModel.infoText.value, Modifier
+                    .padding(8.dp)
+                    .weight(1f)
+            )
+
+            IconButton(onClick = context::readDexFromApk) {
+                Icon(Icons.Filled.Refresh, "重新加载")
+            }
+            Spacer(Modifier.width(8.dp))
+        }
+
+        //标题， 导出dex，反编译按钮
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            //标题
+            Text(
+                text = "选择并提取",
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(1f),
+                fontSize = 24.sp
+            )
+
+            //FIXME 长按按钮 应该显示文字啊，没这功能？
+            //导出选中文件为dex
+            IconButton(
+                onClick = { context.exportDex() }
+            ) { Icon(ImageVector.vectorResource(R.drawable.ic_save), "导出") }
+
+            //查看反编译的smali和java
+            IconButton(
+                onClick = onNavigationToTextViewer,
+            ) { Icon(ImageVector.vectorResource(R.drawable.ic_preview), "查看") }
+
+            Spacer(Modifier.width(8.dp))
+        }
+
+        //smali类
+        Box(
+            Modifier
+                .verticalScroll(vScrollState)
+//                .horizontalScroll(hScrollState) //为什么加上横向滚动之后，内部Text就没法占满屏幕宽度了呢
+                .weight(1f, true)
+                .fillMaxWidth()
+        ) {
+            PackageContent(
+                Modifier.padding(8.dp),
+                viewModel.checkedClassesMap,
+                viewModel.smaliData.value
+            )
+        }
     }
 }
 
 @Composable
-fun Greeting(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text = text,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun PackageContent(viewModel: MyViewModel, pkg: SmaliPackageData) {
-    val isRoot = pkg.fullPkgName == "L"
-//    val scrollState = if (isRoot) rememberScrollState() else null
+fun PackageContent(
+    modifier: Modifier = Modifier,
+    checkedMap: SnapshotStateMap<DexBackedClassDef, Boolean>,
+    pkg: SmaliPackageData
+) {
     Column(
-        modifier = Modifier
-            .padding(start = if (isRoot) 8.dp else 16.dp)
-            //最外层列允许滚动
-//            .then(if (isRoot) Modifier.verticalScroll(scrollState!!) else Modifier)
+        modifier = modifier.fillMaxWidth(),
     ) {
         //子包
         pkg.subPackages.values.forEach { subPkg ->
@@ -90,11 +150,11 @@ fun PackageContent(viewModel: MyViewModel, pkg: SmaliPackageData) {
                     subPkg.allSubClasses.size == 0 -> ToggleableState.Off
 
                     subPkg.allSubClasses.all { def ->
-                        viewModel.checkedClassesMap.getOrDefault(def, false)
+                        checkedMap.getOrDefault(def, false)
                     } -> ToggleableState.On
 
                     subPkg.allSubClasses.none { def ->
-                        viewModel.checkedClassesMap.getOrDefault(def, false)
+                        checkedMap.getOrDefault(def, false)
                     } -> ToggleableState.Off
 
                     else -> ToggleableState.Indeterminate
@@ -103,7 +163,7 @@ fun PackageContent(viewModel: MyViewModel, pkg: SmaliPackageData) {
 
             ItemInfo(checked, R.drawable.ic_folder, subPkg.name,
                 onCheckBoxClick = {
-                    viewModel.checkedClassesMap.putAll(
+                    checkedMap.putAll(
                         subPkg.allSubClasses.associateWith { checked != ToggleableState.On })
                 },
                 onItemClick = {
@@ -116,7 +176,7 @@ fun PackageContent(viewModel: MyViewModel, pkg: SmaliPackageData) {
                 enter = fadeIn() + expandVertically(),
                 exit = fadeOut() + shrinkVertically()
             ) {
-                PackageContent(viewModel, subPkg)
+                PackageContent(Modifier.padding(start = 16.dp), checkedMap, subPkg)
             }
         }
 //        val classesChecked = remember {
@@ -128,7 +188,7 @@ fun PackageContent(viewModel: MyViewModel, pkg: SmaliPackageData) {
         //子类
         pkg.classes.forEach { (name, def) ->
             val checked by derivedStateOf {
-                if (viewModel.checkedClassesMap.getOrDefault(def, false))
+                if (checkedMap.getOrDefault(def, false))
                     ToggleableState.On
                 else
                     ToggleableState.Off
@@ -143,13 +203,13 @@ fun PackageContent(viewModel: MyViewModel, pkg: SmaliPackageData) {
                         pkg.classes.forEach { (name1, def1) ->
                             // 如果当前选择的是内部类，注意外部类也要被勾选。
                             if (name1 == prefix || name1.startsWith("$prefix\$")) {
-                                viewModel.checkedClassesMap[def1] = nextState
+                                checkedMap[def1] = nextState
                             }
                         }
                     },
                 ),
                 onItemClick = {
-                    viewModel.checkedClassesMap[def] = checked != ToggleableState.On
+                    checkedMap[def] = checked != ToggleableState.On
                 })
         }
     }
@@ -214,5 +274,25 @@ private fun ItemInfo(
             }
 
         }
+    }
+}
+
+@Composable
+fun ExportResultDialog(textState: MutableState<String>, onNavigationToTextViewer: () -> Unit) {
+    var text by textState
+    if (text.isNotEmpty()) {
+        AlertDialog(
+            onDismissRequest = { text = "" },
+            confirmButton = {
+                TextButton(onClick = { text = "" }) { Text("确定") }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    onNavigationToTextViewer()
+                    text = ""
+                }) { Text("查看反编译代码") }
+            },
+            text = { Text(text) },
+        )
     }
 }

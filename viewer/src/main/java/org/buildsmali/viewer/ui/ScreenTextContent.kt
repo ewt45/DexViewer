@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
@@ -23,7 +22,6 @@ import androidx.compose.animation.splineBasedDecay
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -64,14 +62,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
@@ -93,7 +89,6 @@ import org.buildsmali.viewer.MyViewModel
 import org.buildsmali.viewer.R
 import org.buildsmali.viewer.utils.CodeType
 import org.buildsmali.viewer.utils.Utils
-import org.buildsmali.viewer.utils.inOpenRange
 import org.json.JSONObject
 import kotlin.math.min
 
@@ -107,7 +102,7 @@ fun TextContentScreen(
     Column(
         modifier = modifier
     ) {
-        val result by viewModel.extractedResult
+        val result by viewModel.decompiledResult
         var codeType by viewModel.displayCodeType
         when (result) {
             0 -> Text("正在提取中，请稍候")
@@ -677,7 +672,7 @@ fun test2() {
         text += "$i oi3rewfjvi8huegirweroqiwd6^*BVTgh9fjiewmrk4triegd0sde\n"
 
 
-    //TODO 手动绘制文字 https://developer.android.com/develop/ui/compose/graphics/draw/overview
+    // 手动绘制文字 https://developer.android.com/develop/ui/compose/graphics/draw/overview
     // 基于数值的动画 https://developer.android.com/develop/ui/compose/animation/value-based
     // 惯性滚动（滚动速度平滑衰减）https://jetpackcompose.cn/docs/design/gesture/gesture_with_anim/
     // 同上 https://juejin.cn/post/7171420234811703333
@@ -773,21 +768,6 @@ fun test2() {
                                             animatedOffset.animateDecay(Offset(secVel.x, 0f), decay)
                                         }
                                     }
-                                    Log.d(
-                                        "aaa",
-                                        "prev: 结束时理由=$endReason, 速度是否都为0 ${secVel.x}, ${secVel.y}, " +
-                                                "是否没到达边界 ${
-                                                    secOffset.x.inOpenRange(
-                                                        minOffsetX,
-                                                        maxOffsetX
-                                                    )
-                                                }， ${
-                                                    secOffset.y.inOpenRange(
-                                                        minOffsetY,
-                                                        maxOffsetY
-                                                    )
-                                                }"
-                                    )
                                 }
 
 

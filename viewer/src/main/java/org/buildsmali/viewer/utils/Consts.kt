@@ -1,6 +1,10 @@
 package org.buildsmali.viewer.utils
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import java.io.File
 
 object Consts {
@@ -12,9 +16,7 @@ object Consts {
      * 初始化一些常量数据
      */
     fun initData(ctx: Context) {
-//        cacheDir = ctx.cacheDir
-        //TODO 改为内部路径？
-        cacheDir = File("/sdcard/Download/Jadx")
+        cacheDir = ctx.cacheDir
         cacheDir.mkdirs()
         cacheOutDexFile = File(cacheDir, "cacheOut.dex")
         cacheJadxOutDir = File(cacheDir, "cacheJadxOut")
@@ -26,3 +28,13 @@ enum class CodeType(val value:String) {
     Java("Java"),
     Smali("Smali"),
 }
+
+/**
+ * 存储键值对
+ */
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "default")
+
+/**
+ * data store的 key, 代表导出dex时的默认文件名称
+ */
+val DSKEY_SAVE_DEX_NAME = stringPreferencesKey("save_dex_name")
